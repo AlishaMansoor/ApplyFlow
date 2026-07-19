@@ -41,7 +41,8 @@ const App = () => {
       />
       <Routes>
         /* Public Landing */
-        <Route path="/" element={<LandingPage />} />
+        {/* <Route path="/" element={<LandingPage />} /> */}
+        <Route path="/" element={<Navigate to="/home" replace />} />
 
         /* Auth Routes (Not protected with isAuth) */
         <Route path='/signup' element={userData ? <Navigate to="/home" /> : <Signup />}></Route>
