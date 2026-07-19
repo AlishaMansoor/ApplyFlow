@@ -57,7 +57,7 @@ const httpServer = createServer(app); // wraps fully-configured Express app insi
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "applyflowfrontend-hsrsmmwpg-alisha19.vercel.app" 
+    "https://applyflowfrontend-hsrsmmwpg-alisha19.vercel.app" 
 ];
 
 const io = new Server(httpServer, {
