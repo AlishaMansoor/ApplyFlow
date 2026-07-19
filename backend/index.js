@@ -40,7 +40,7 @@ app.set('onlineUsers', onlineUsers); // Make the onlineUsers instance available 
 
 
 
-app.get("/", (req, res) => { res.send('Backend is running') });
+// app.get("/", (req, res) => { res.send('Backend is running') });
 
 app.use('/api/auth', authrouter);
 app.use('/api/user', userrouter);
@@ -54,12 +54,27 @@ app.use('/api/notification', notificationrouter);
 
 const httpServer = createServer(app); // wraps fully-configured Express app inside a raw Node http server
 
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "applyflowfrontend-hsrsmmwpg-alisha19.vercel.app" 
+];
+
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: (origin, callback) => {
+            // Allow requests with no origin (like mobile apps or curl requests) 
+            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         credentials: true
     }
-})
+});
+
+
 app.set('io', io); // Make the Socket.IO instance available in Express routes via req.app.get('io')
 
 
