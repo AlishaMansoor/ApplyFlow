@@ -75,10 +75,10 @@ const httpServer = createServer(app); // wraps fully-configured Express app insi
 
 
 const io = new Server(httpServer, {
-    cors: {
+   cors: {
         origin: (origin, callback) => {
-            // Allow requests with no origin (like mobile apps or curl requests) 
-            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            // Match the exact flexible rule we gave to Express
+            if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
                 callback(null, true);
             } else {
                 callback(new Error("Not allowed by CORS"));
