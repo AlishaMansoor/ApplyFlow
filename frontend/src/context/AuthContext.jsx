@@ -4,7 +4,7 @@ export const AuthDataContext = React.createContext();
 function AuthContext  ({children}) {
   return (
     <div>
-      <AuthDataContext.Provider value={{serverUrl:"http://localhost:3000" }}>
+      <AuthDataContext.Provider value={{serverUrl:"https://applyflowbackend.onrender.com" }}>
       {children}
       </AuthDataContext.Provider>
     </div>
