@@ -37,7 +37,8 @@ app.use(cookieParser());
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://applyflowfrontend-hsrsmmwpg-alisha19.vercel.app" 
+    "https://applyflowfrontend.vercel.app", 
+    "https://applyflowfrontend-hsrsmmwpg-alisha19.vercel.app"
 ];
 
 app.use(cors({
