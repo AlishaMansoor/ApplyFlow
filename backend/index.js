@@ -29,11 +29,28 @@ const onlineUsers = new Map();
 
 app.use(express.json());
 app.use(cookieParser());
+// app.use(cors({
+//     origin: "http://localhost:5173",
+//     credentials: true
+// })
+// );
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://applyflowfrontend-hsrsmmwpg-alisha19.vercel.app" 
+];
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+        // Allow local dev, main domain, and ANY Vercel preview URL ending in .vercel.app
+        if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
-})
-);
+}));
 
 dbconnection();
 app.set('onlineUsers', onlineUsers); // Make the onlineUsers instance available in Express routes via req.app.get('onlineUsers');
@@ -55,10 +72,6 @@ app.use('/api/notification', notificationrouter);
 const httpServer = createServer(app); // wraps fully-configured Express app inside a raw Node http server
 
 
-const allowedOrigins = [
-    "http://localhost:5173",
-    "https://applyflowfrontend-hsrsmmwpg-alisha19.vercel.app" 
-];
 
 const io = new Server(httpServer, {
     cors: {
