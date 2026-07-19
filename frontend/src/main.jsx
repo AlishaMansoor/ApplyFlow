@@ -6,7 +6,8 @@ import AuthContext from './context/AuthContext.jsx'
 import UserContext from './context/UserContext.jsx'
 import SearchContext from './context/SearchContext.jsx'
 import ChatContext from './context/ChatContext.jsx'
-
+import axios from 'axios';
+axios.defaults.withCredentials = true; // 👈 Forces all requests to include tokens
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <AuthContext>
