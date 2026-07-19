@@ -1,0 +1,16 @@
+The automatic authentication check is due to useEffect
+
+so inside UserContext.jsx useEffect runs and fetches user data. even no user requests it manually or through some clicking , the url /api/user/currentuser route hits through useEffect in UserContext.jsx inside getcurrUser function. then in backend usercontroller route hits with the same url /api/user/currentuser [like we handle signup with Signuphandler function which connects frontend functioning with backend routing using axios] then backend sends user data from backend in console in browser. after that in frontend inside the same getcurrUser function user information sets using setUserData.....the whole thing is about useEffect
+
+
+
+...Making Sidebar,
+while displaying Username and Headline in the sidebar, i needed UserDataContext again which runs every time page refreshes, so the Userdata dont get lost after page reload. my App is wrapped with the UserDataContext which provide three things
+1-loading, a false boolean value till page loads(or userData gets set[/api/user/currentuser]).  
+2-userData, actual data of the user loggedin(User with Session)
+3-SetUserData, this function allows to reset the userData on any page like EditProfile.jsx or something.
+So we are using two normal variables {userData, loading} (not useState variables) and store whatever the UserDataContext provides throung these states like  
+<UserDataContext.Provider value={{ userData, setUserData, loading }}>
+    {children}
+</UserDataContext.Provider>
+finally use it for displaying username and headline in the Sidebar.

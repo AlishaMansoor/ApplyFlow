@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --toastify-color-success: #0b9b6d;
+    --toastify-color-error: #ef4444;
+    --toastify-color-info: #0ea5e9;
+    --toastify-color-warning: #f59e0b;
+    --toastify-text-color-light: #1f2937;
+    --toastify-font-family: inherit;
+    --toastify-border-radius: 12px;
+    --toastify-toast-min-height: 48px;
+}
+
+/* Hide browser default password reveal eye icon */
+input::-ms-reveal {
+  display: none;
+}
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
