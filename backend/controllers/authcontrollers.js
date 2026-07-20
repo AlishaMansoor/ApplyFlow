@@ -68,8 +68,9 @@ const signup = async (req, res) => {
         let token = await genToken(newuser._id);
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            // secure: process.env.NODE_ENV === "production",
+             secure: true,
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         // console.log("authcontrollers.js, signup route :New user created:", newuser);
@@ -115,8 +116,9 @@ const login = async (req, res) => {
         let token = await genToken(existinguser._id);
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            // secure: process.env.NODE_ENV === "production",
+            secure: true,
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         // console.log("Logged-in User:", existinguser);
