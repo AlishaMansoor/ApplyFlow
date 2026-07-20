@@ -124,14 +124,21 @@ function InviteModal({ setInviteModal, receiverId }) {
           >
             Cancel
           </button>
-          <button
-            onClick={handleInvite}
-            disabled={!selectedJob}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm 
-                       hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Send Invite
-          </button>
+        <button
+  onClick={handleInvite}
+  disabled={!selectedJob || loading}
+  className="relative min-w-[110px] h-9 px-4 py-2 bg-blue-500 text-white font-medium rounded-lg text-sm 
+             hover:bg-blue-600 active:bg-blue-700
+             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500
+             transition-all duration-200 ease-in-out
+             flex items-center justify-center"
+>
+  {loading ? (
+    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+  ) : (
+    "Send Invite"
+  )}
+</button>
         </div>
 
       </div>
