@@ -154,16 +154,13 @@ const Profile = () => {
 
 
   const handleMessageButtonClick = async () => {
-    console.log("=== DEBUG ===");
-    console.log("requestStatus:", requestStatus);
-    console.log("chats count:", chats.length);
-    console.log("profileData._id:", profileData?._id);
-    chats.forEach((chat, i) => {
-      console.log(`chat ${i} participants:`, chat.participants.map(p => ({
-        id: p._id,
-        name: p.firstName
-      })));
-    });
+  
+    // chats.forEach((chat, i) => {
+    //   console.log(`chat ${i} participants:`, chat.participants.map(p => ({
+    //     id: p._id,
+    //     name: p.firstName
+    //   })));
+    // });
 
     if (requestStatus === 'accepted') {
       let matchedConversation = chats.find(chat =>
