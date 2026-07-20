@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UserDataContext } from '../../context/UserContext.jsx'
 import { AuthDataContext } from '../../context/AuthContext.jsx'
@@ -42,6 +43,9 @@ const ConversationList = ({ onClose, isModal = false }) => {
     setActiveSection } = React.useContext(ChatDataContext);
   const [requestsModal, setRequestsModal] = React.useState(false);
   const [inviteModal, setInviteModal] = React.useState(false);
+
+  const [loadingRequests, setLoadingRequests] = useState([]);
+  const [loadingInvites, setLoadingInvites] = useState([]);
   const navigate = useNavigate()
 
   const location = useLocation();
@@ -93,6 +97,9 @@ const ConversationList = ({ onClose, isModal = false }) => {
 
 
   const acceptRequest = async (connectionId) => {
+    if (loadingRequests.includes(connectionId)) return;
+
+    setLoadingRequests(prev => [...prev, connectionId]);
     try {
       const result = await axios.put(`${serverUrl}/api/connection/accept/${connectionId}`, { status: 'accepted' }, { withCredentials: true });
 
@@ -108,12 +115,16 @@ const ConversationList = ({ onClose, isModal = false }) => {
       }
     } catch (e) {
       console.error("Error in accepting Request: ", e.response?.data?.message || e.message);
+    } finally {
+      setLoadingRequests(prev => prev.filter(id => id !== connectionId));
     }
   }
 
   const rejectRequest = async (connectionId) => {
+    if (loadingInvites.includes(connectionId)) return;
+
+    setLoadingRequests(prev => [...prev, connectionId]);
     try {
-      console.log("rejectRequest hit!")
       const result = await axios.put(`${serverUrl}/api/connection/reject/${connectionId}`, { status: 'rejected' }, { withCredentials: true });
       if (result.status === 200) {
         setRequestData(a => a.filter(b => b._id !== connectionId));
@@ -122,12 +133,17 @@ const ConversationList = ({ onClose, isModal = false }) => {
 
     } catch (e) {
       console.error("Error in rejecting Request: ", e.response?.data?.message || e.message);
+    } finally {
+      setLoadingRequests(prev => prev.filter(id => id !== connectionId));
     }
   }
 
 
 
   const acceptInvite = async (inviteId) => {
+    if (loadingInvites.includes(inviteId)) return;
+
+    setLoadingInvites(prev => [...prev, inviteId]);
     try {
       const result = await axios.put(`${serverUrl}/api/invite/accept/${inviteId}`, {}, { withCredentials: true });
 
@@ -145,10 +161,15 @@ const ConversationList = ({ onClose, isModal = false }) => {
 
     } catch (e) {
       console.error("Error in rejecting Invite: ", e.response?.data?.message || e.message);
+    } finally {
+      setLoadingInvites(prev => prev.filter(id => id !== inviteId));
     }
   }
 
   const rejectInvite = async (inviteId) => {
+    if (loadingInvites.includes(inviteId)) return;
+
+    setLoadingInvites(prev => [...prev, inviteId]);
     try {
       const result = await axios.put(`${serverUrl}/api/invite/reject/${inviteId}`, {}, { withCredentials: true });
       if (result.status === 200) {
@@ -157,6 +178,8 @@ const ConversationList = ({ onClose, isModal = false }) => {
 
     } catch (e) {
       console.error("Error in rejecting Invite: ", e.response?.data?.message || e.message);
+    } finally {
+      setLoadingInvites(prev => prev.filter(id => id !== inviteId));
     }
   }
 
@@ -213,21 +236,37 @@ const ConversationList = ({ onClose, isModal = false }) => {
         <div className="w-full min-h-16 border-b rounded-b-xl  border-gray-200 h-auto shadow-md flex flex-col justify-start items-start p-2">
           {requestCount === 0 && <p className="text-sm pl-3 mt-3 text-gray-600 font-normal italic">
             You do not have any new request.</p>}
-          {requestData.map((req, index) => (
-            <div key={index} className="w-full flex items-center  justify-between p-2 ">
-              <div className=" flex gap-2">
-                <img src={req.senderId.profileImage || null} alt="" className="w-10 h-10 rounded-full border " />
-                <div className="">
-                  <p className="text-sm  text-gray-500">{req.senderId.firstName}-{req.senderId.lastName}</p>
-                  <p className="text-xs italic text-gray-500">@{req.senderId.userName}</p>
+          {requestData.map((req, index) => {
+            const isRequestLoading = loadingRequests.includes(req._id);
+            return (
+              <div key={index} className="w-full flex items-center  justify-between p-2 ">
+                <div className=" flex gap-2">
+                  <img src={req.senderId.profileImage || null} alt="" className="w-10 h-10 rounded-full border " />
+                  <div className="">
+                    <p className="text-sm  text-gray-500">{req.senderId.firstName}-{req.senderId.lastName}</p>
+                    <p className="text-xs italic text-gray-500">@{req.senderId.userName}</p>
+                  </div>
                 </div>
+                
+                 <div className="flex items-center min-w-[50px] justify-end">
+                      {isRequestLoading ? (
+                        /* Single shared spinner shown during accept OR reject */
+                        <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        /* Normal Buttons */
+                        <div className="flex gap-3">
+                          <button onClick={() => rejectRequest(req._id)}>
+                            <RxCross2 className="w-5 h-5 stroke-[1] text-red-500 hover:text-red-600" />
+                          </button>
+                          <button onClick={() => acceptRequest(req._id)}>
+                            <FaCheck className="w-4 h-4 text-emerald-600 hover:text-emerald-700" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
               </div>
-              <div className="flex gap-3">
-                <button onClick={() => { rejectRequest(req._id) }} className=""><RxCross2 className=" w-5 h-5 stroke-[1] text-red-500 " /></button>
-                <button onClick={() => { acceptRequest(req._id) }} className=""><FaCheck className=" w-4 h-4 text-emerald-600 " /></button>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
       {/* Invites row */}
@@ -257,28 +296,45 @@ const ConversationList = ({ onClose, isModal = false }) => {
             <div className="w-full min-h-16 border-b rounded-b-xl  border-gray-200 h-auto shadow-md flex flex-col justify-start items-start p-2">
               {invites.length === 0 && <p className="text-sm mt-3 pl-3 text-gray-600 font-normal italic">
                 You do not have any new Invites.</p>}
-              {invites.map((req, index) => (
-                <div key={req._id || index} className="w-full flex items-center  justify-between p-2 ">
-                  <div className="flex flex-col w-full">
-                    <p className="text-xs text-emerald-600 font-medium mt-0.5">
-                      {req.jobId?.title} · {req.jobId?.companyName}
-                    </p>
-                    <div className="w-full flex gap-2">
+              {invites.map((req, index) => {
+                const isInviteLoading = loadingInvites.includes(req._id);
+                return (
+                  <div key={req._id || index} className="w-full flex items-center  justify-between p-2 ">
+                    <div className="flex flex-col w-full">
+                      <p className="text-xs text-emerald-600 font-medium mt-0.5">
+                        {req.jobId?.title} · {req.jobId?.companyName}
+                      </p>
+                      <div className="w-full flex gap-2">
 
-                      <img src={req.senderId.profileImage || null} alt="" className="w-10 h-10 rounded-full border " />
-                      <div className="w-full">
-                        <p className="text-sm  text-gray-500">{req.senderId.firstName}-{req.senderId.lastName}</p>
-                        <p className="text-xs italic text-gray-500">@{req.senderId.userName}</p>
+                        <img src={req.senderId.profileImage || null} alt="" className="w-10 h-10 rounded-full border " />
+                        <div className="w-full">
+                          <p className="text-sm  text-gray-500">{req.senderId.firstName}-{req.senderId.lastName}</p>
+                          <p className="text-xs italic text-gray-500">@{req.senderId.userName}</p>
 
+                        </div>
                       </div>
                     </div>
+
+                  
+                    <div className="flex items-center min-w-[50px] justify-end">
+                      {isInviteLoading ? (
+                        /* Single shared spinner shown during accept OR reject */
+                        <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        /* Normal Buttons */
+                        <div className="flex gap-3">
+                          <button onClick={() => rejectInvite(req._id)}>
+                            <RxCross2 className="w-5 h-5 stroke-[1] text-red-500 hover:text-red-600" />
+                          </button>
+                          <button onClick={() => acceptInvite(req._id)}>
+                            <FaCheck className="w-4 h-4 text-emerald-600 hover:text-emerald-700" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex gap-3">
-                    <button onClick={() => { rejectInvite(req._id) }} className=""><RxCross2 className=" w-5 h-5 stroke-[1] text-red-500 " /></button>
-                    <button onClick={() => { acceptInvite(req._id) }} className=""><FaCheck className=" w-4 h-4 text-emerald-600 " /></button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
@@ -310,7 +366,7 @@ const ConversationList = ({ onClose, isModal = false }) => {
                     ) : (
                       <div className="w-11 h-11 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold flex-shrink-0">
                         {otherUser?.firstName ? (
-                        otherUser.firstName.charAt(0).toUpperCase() 
+                          otherUser.firstName.charAt(0).toUpperCase()
                         ) : (
                           <FaUserCircle className="w-6 h-6 text-emerald-600" />
                         )}
@@ -321,20 +377,20 @@ const ConversationList = ({ onClose, isModal = false }) => {
                          rounded-full w-4 h-4 ">{chat.unreadCount}</span>
                     )}
                   </div>
-     
 
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">
-                    {otherUser?.firstName} {otherUser?.lastName}
-                  </p>
-                  <p className="text-xs text-gray-400 truncate">
-                    @{otherUser?.userName}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate mt-0.5 block max-w-[180px] sm:max-w-[220px] ">
-                    {chat.lastMessage || 'Start a conversation'}
 
-                  </p>
-                </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-800 truncate">
+                      {otherUser?.firstName} {otherUser?.lastName}
+                    </p>
+                    <p className="text-xs text-gray-400 truncate">
+                      @{otherUser?.userName}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate mt-0.5 block max-w-[180px] sm:max-w-[220px] ">
+                      {chat.lastMessage || 'Start a conversation'}
+
+                    </p>
+                  </div>
                 </div>
               </div>
             )
