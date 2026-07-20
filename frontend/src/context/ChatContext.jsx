@@ -43,6 +43,7 @@ const ChatContext = ({ children }) => {
 
         //Establish handshake connection with backend server URL
         const socketInstance = io(serverUrl, {
+            transports: ['polling', 'websocket'],
             query: { userId: userData._id },
             withCredentials: true,
         });
@@ -53,6 +54,8 @@ const ChatContext = ({ children }) => {
             setOnlineUsers(users);
         });
 
+
+        
         //CLEANUP: Disconnect automatically if the user logs out or closes the app
         return () => {
             socketInstance.disconnect();

@@ -2,12 +2,13 @@ import React from 'react'
 export const AuthDataContext = React.createContext();
 
 function AuthContext  ({children}) {
+  const serverUrl = import.meta.env.VITE_SERVER_URL || "https://applyflowbackend.onrender.com";
   return (
-    <div>
-      <AuthDataContext.Provider value={{serverUrl:"https://applyflowbackend.onrender.com" }}>
+    
+      <AuthDataContext.Provider value={{ serverUrl }}>
       {children}
       </AuthDataContext.Provider>
-    </div>
+    
   )
 }
 
