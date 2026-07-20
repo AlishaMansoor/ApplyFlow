@@ -37,7 +37,7 @@ app.use(cookieParser());
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://applyflowfrontend.vercel.app", 
+    "https://applyflowfrontend.vercel.app",
     "https://applyflowfrontend-hsrsmmwpg-alisha19.vercel.app"
 ];
 
@@ -75,7 +75,8 @@ const httpServer = createServer(app); // wraps fully-configured Express app insi
 
 
 const io = new Server(httpServer, {
-   cors: {
+    transports: ['polling', 'websocket'],
+    cors: {
         origin: (origin, callback) => {
             // Match the exact flexible rule we gave to Express
             if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
@@ -94,15 +95,17 @@ app.set('io', io); // Make the Socket.IO instance available in Express routes vi
 
 
 
-
 io.on('connection', (socket) => {
     // console.log("index.js, ws api, connection event:a user connected: ", socket.id);
     const userId = socket.handshake.query.userId; // from frontend on connect
-    
+
     // Safety check: Only map valid user IDs
-    if (userId && userId !== 'undefined') {
-    onlineUsers.set(userId, socket.id);
-    console.log(`User ${userId} is online.`);
+    if (userId && userId !== 'undefined' && userId !== null) {
+        const stringUserId = userId.toString();
+        onlineUsers.set(stringUserId, socket.id);
+        console.log(` User ${stringUserId} mapped to socket ${socket.id}`);
+    } else {
+        console.log(` Socket connected without a valid userId: ${socket.id}`);
     }
 
     io.emit('get-online-users', Array.from(onlineUsers.keys()));
@@ -134,7 +137,7 @@ io.on('connection', (socket) => {
         socket.broadcast.to(conversationId).emit('conversation-read', { conversationId });
     });
 
-    socket.on('send-message', ({conversationId, message, receiverId })=>{
+    socket.on('send-message', ({ conversationId, message, receiverId }) => {
         console.log(`listening 'send-message' event from frontend!`);
         const onlineUsers = app.get('onlineUsers');
         const receiverSocketId = onlineUsers?.get(receiverId?.toString());
@@ -149,15 +152,18 @@ io.on('connection', (socket) => {
                 conversationId,
                 message
             });
-            console.log(`'new-message-notification' event sent from backend`);
+        } else {
+            console.log(`'new-message-notification' event sent from backend,⚠️ Receiver ${receiverId} is not in onlineUsers map.`);
         }
     });
 
     socket.on('disconnect', () => {
         // console.log("a user disconnected", socket.id);
-        onlineUsers.delete(userId.toString());
-        console.log(`User ${userId} went offline.`);
-        
+        if (userId && userId !== 'undefined') {
+            onlineUsers.delete(userId.toString());
+            console.log(`User ${userId} went offline.`);
+        }
+
         io.emit('get-online-users', Array.from(onlineUsers.keys()));
     });
 
