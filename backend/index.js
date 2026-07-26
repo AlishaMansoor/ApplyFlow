@@ -103,10 +103,8 @@ io.on('connection', (socket) => {
     if (userId && userId !== 'undefined' && userId !== null) {
         const stringUserId = userId.toString();
         onlineUsers.set(stringUserId, socket.id);
-        console.log(` User ${stringUserId} mapped to socket ${socket.id}`);
-    } else {
-        console.log(` Socket connected without a valid userId: ${socket.id}`);
-    }
+        // console.log(` User ${stringUserId} mapped to socket ${socket.id}`);
+    } 
 
     io.emit('get-online-users', Array.from(onlineUsers.keys()));
 
@@ -147,21 +145,19 @@ io.on('connection', (socket) => {
 
         //Navbar Badge (red dot) emit, Send live notification ping if they are on another page/inactive but online
         if (receiverSocketId) {
-            console.log(`sending 'new-message-notification' event from backend`);
+            // console.log(`sending 'new-message-notification' event from backend`);
             io.to(receiverSocketId).emit('new-message-notification', {
                 conversationId,
                 message
             });
-        } else {
-            console.log(`'new-message-notification' event sent from backend,⚠️ Receiver ${receiverId} is not in onlineUsers map.`);
-        }
+        } 
     });
 
     socket.on('disconnect', () => {
         // console.log("a user disconnected", socket.id);
         if (userId && userId !== 'undefined') {
             onlineUsers.delete(userId.toString());
-            console.log(`User ${userId} went offline.`);
+            // console.log(`User ${userId} went offline.`);
         }
 
         io.emit('get-online-users', Array.from(onlineUsers.keys()));
