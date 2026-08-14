@@ -74,7 +74,7 @@ const Profile = () => {
     fetchUser();
 
   }, [userName, userData?.userName]);
-  console.log(profileData);
+  // console.log(profileData);
 
 
 
@@ -85,16 +85,16 @@ const Profile = () => {
       try {
         const result = await axios.get(`${serverUrl}/api/job/gettotaljobs/${profileData.userName}`, { withCredentials: true });
         setTotalJobData(result.data.totalJobs ?? []);
-        console.log("Posted jobs, Profile page:", result.data.totalJobs);
-      } catch (error) {
+      //   console.log("Posted jobs, Profile page:", result.data.totalJobs);
+       } catch (error) {
         console.error("Error fetching posted jobs:", error.response?.data);
 
       }
     }
     fetchPostedJobs();
   }, [profileData]);
-  console.log("requestStatus:", requestStatus);
-  console.log("chats length:", chats.length);
+  // console.log("requestStatus:", requestStatus);
+  // console.log("chats length:", chats.length);
 
   const fetchRequestStatus = async () => {
     try {

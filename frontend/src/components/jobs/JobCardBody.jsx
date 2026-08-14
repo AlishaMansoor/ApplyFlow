@@ -22,9 +22,9 @@ const JobCardBody = ({ filteredJobs, showHeader = true }) => {
 
 
     return (
-        <div className="w-full bg-slate-50 flex flex-col gap-10 justify-start p-0 max-w-2xl lg:max-w-none lg:mx-0">
+        <div className="w-full bg-slate-50 flex flex-col gap-10 justify-start p-0 max-w-2xl lg:max-w-none lg:mx-0 mb-10">
  {showHeader && ( 
-            <div>
+            <div className="  w-full mt-3">
                 <p className="text-xl font-semibold text-gray-700  mt-2 ">Explore jobs</p>
                 <p className='font-normal text-sm italic text-gray-500'> Find opportunities that match your skills and goals.</p>
             </div>

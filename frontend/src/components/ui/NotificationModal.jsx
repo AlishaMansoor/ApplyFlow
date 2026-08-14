@@ -145,7 +145,7 @@ setNotificationCount } = React.useContext(ChatDataContext);
 
       {/* modal */}
       <div className="fixed top-[70px] right-4 w-[90%] max-w-[360px] 
-                      bg-white rounded-2xl shadow-2xl border border-gray-100 
+                      bg-slate-50 rounded-2xl shadow-2xl border border-gray-100 
                       z-50 overflow-hidden">
 
         {/* header */}

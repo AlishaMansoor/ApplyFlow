@@ -56,7 +56,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 1, x: -240 }}
                 transition={isHomePage?{ duration: 0.3, ease: 'easeOut' }:{duration:0}}
-                className="z-40 h-[calc(100vh-80px)] bg-emerald-100 border-r-2 border-gray-300 w-[240px] flex flex-col px-4 py-6 items-center fixed top-[80px] left-0 overflow-y-auto">
+                className="z-40 h-[calc(100vh-80px)] bg-emerald-100 border-r-2 text-gray-700 border-gray-300 w-[240px] flex flex-col px-4 py-6 items-center fixed top-[80px] left-0 overflow-y-auto">
 
                 {/* Profile section — same for both,candidate and recruiter */}
                 {loading ? (

@@ -18,17 +18,16 @@ import JobDetailsRecruiter from './pages/JobDetailRecruiter.jsx'
 import Chats from './pages/ChatPage.jsx';
 import Settings from './pages/Settings.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
+import AuthLoadingOverlay from './components/ui/AuthLoadingOverlay.jsx';
 
 const Profile = lazy(() => import('./pages/ProfilePage.jsx'));
 const SavedApplication = lazy(() => import('./pages/SavedJobs.jsx'));
 
 const App = () => {
   const { userData, loading } = React.useContext(UserDataContext);
-  if (loading) return (
-  <div className="flex items-center justify-center h-screen">
-    <p className="text-gray-500">Loading...</p>
-  </div>
-);
+  if (loading) {
+    return <AuthLoadingOverlay isLoading={true} />;
+  }
   return (
     <>
       <ToastContainer

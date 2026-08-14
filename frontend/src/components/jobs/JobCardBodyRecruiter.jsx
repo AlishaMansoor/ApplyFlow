@@ -45,10 +45,10 @@ function JobCardBodyRecruiter({ filteredJobs, isProfileIncomplete }) {
                     setCreateJobOpen={setCreateJobOpen}
                 />
             )}
-            <div className="w-full bg-slate-50 flex flex-col gap-4 justify-start max-w-2xl lg:max-w-none lg:mx-0">
+            <div className="w-full bg-slate-50 flex flex-col gap-4 justify-start max-w-2xl lg:max-w-none lg:mx-0 mb-8">
                 <div className="flex bg-slate-50 items-center justify-between mb-0">
                     {filteredJobs.length !== 0 && (
-                        <div className="w-full">
+                        <div className="w-full mt-3">
                             <p className="text-xl font-semibold text-gray-700  mt-2 ">Your jobs</p>
                             <p className='font-normal text-sm italic text-gray-500'> Manage your job postings and track applications.</p>
 

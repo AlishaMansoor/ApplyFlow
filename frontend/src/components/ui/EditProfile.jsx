@@ -28,7 +28,7 @@ function EditProfile({ setEditProfileOpen }) {
     const [backendSkill, setBackendSkill] = React.useState("");
     const [backendEducation, setBackendEducation] = React.useState({ college: "", degree: "", fieldOfStudy: "", startYear: "", endYear: "" });
     const [backendExperience, setBackendExperience] = React.useState({ title: "", description: "", company: "", startDate: "", endDate: "" });
-    const [frontendProfileImage, setFrontendProfileImage] = React.useState(userData?.profileImage || "");
+    const [frontendProfileImage, setFrontendProfileImage] = React.useState(userData?.profileImage || null);
     const [backendProfileImage, setBackendProfileImage] = React.useState(null);
     //Recruiter feilds 
     const [organization, setOrganization] = React.useState({
@@ -122,6 +122,8 @@ function EditProfile({ setEditProfileOpen }) {
             [name]: value
         }));
     }
+
+
     const editProfileHandler = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -206,10 +208,10 @@ function EditProfile({ setEditProfileOpen }) {
 
 
 
-                <div className=' w-20 h-20 relative bg-pink-300 rounded-full flex items-center justify-center text-lg font-bold text-gray-600'>
+                <div className=' w-20 h-20 relative rounded-full flex items-center justify-center text-lg font-bold text-gray-600'>
 
                     <FaCirclePlus onClick={() => profileImageRef.current?.click()} className='right-1 bottom-1 absolute text-emerald-600 cursor-pointer' />
-                    {userData?.profileImage ? (
+                    {frontendProfileImage ? (
                         <img
                             src={frontendProfileImage}
                             alt="Profilyyy" //if the image is not shown or loaded then this text gonna appear
@@ -258,7 +260,7 @@ function EditProfile({ setEditProfileOpen }) {
                                 <label className='font-medium text-sm text-gray-500'>CompanySize</label>
                                 <select name="organizationSize" value={organization.organizationSize} onChange={handleOrganizationChange}
                                     className='w-full border-2 border-gray-400 outline-none p-2 rounded-md mt-1 focus:outline-none focus:border-gray-500'>
-                                    <option value="">Size</option>
+                                    {/* <option value="">Size</option> */}
                                     <option value="1-50">1-50</option>
                                     <option value="51-200">51-200</option>
                                     <option value="201-500">201-500</option>

@@ -42,28 +42,31 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
         setUnreadCount,
         requestCount,
         notificationCount } = React.useContext(ChatDataContext);
-    const [profileDropdown, setProfileDropdown] = React.useState(false);
+
+    // Single source of truth for which nav panel is open
+    const [activePanel, setActivePanel] = React.useState(null); // null | 'profile' | 'notifications'
+
     const [logoutModal, setLogoutModal] = React.useState(false);
     const [editProfileOpen, setEditProfileOpen] = React.useState(false);
     const isRecruiter = userData?.userType === 'recruiter';
-    const dropdownRef = React.useRef(null);
+    const navIconsRef = React.useRef(null);
     const navigate = useNavigate();
     const [searchResults, setSearchResults] = React.useState([]);
     const [searchLoading, setSearchLoading] = React.useState(false);
     const [searchPreviewDropDown, setSearchPreviewDropDown] = React.useState(false);
     const [chatModal, setChatModal] = React.useState(false);
-    const [notificationModal, setNotificationModal] = React.useState(false);
 
-    // Close dropdown if user clicks outside of it
+    // Close any open panel (profile/notifications/chat) if user clicks outside the nav icons cluster
     React.useEffect(() => {
         const handleClickOutside = (e) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-                setProfileDropdown(false);
+            if (navIconsRef.current && !navIconsRef.current.contains(e.target)) {
+                setActivePanel(null);
+                if (desktopChatModal) setDesktopChatModal(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    }, [desktopChatModal, setDesktopChatModal]);
 
 
     React.useEffect(() => {
@@ -105,7 +108,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
         <div>
             {editProfileOpen && (<EditProfile setEditProfileOpen={setEditProfileOpen} />)}
             {logoutModal && <LogoutModal setLogoutModal={setLogoutModal} />}
-            {notificationModal && <NotificationModal setNotificationModal={setNotificationModal} />}
+            {activePanel === 'notifications' && <NotificationModal setNotificationModal={() => setActivePanel(null)} />}
 
             {desktopChatModal && (
                 <div className="hidden lg:flex fixed bottom-5 right-6 w-96 h-[470px] bg-gray-50 border border-gray-200  rounded-xl z-50 overflow-hidden flex-col shadow-[8px_8px_16px_rgba(0,0,0,0.08)]">
@@ -141,7 +144,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                                     }
                                 }
                             }}
-                            className="w-full  border-2  border-gray-500 text-[16px] p-1 pr-10 rounded-full focus:outline-none focus:border-emerald-600" />
+                            className="w-full  border-2  border-gray-400 text-[16px] p-1 pr-10 rounded-full focus:outline-none focus:border-emerald-600" />
                         {/* {console.log("searchquery: ", searchQuery)} */}
                         <button type="button" className="absolute cursor-pointer right-8 text-gray-600 font-medium text-xl overflow-hidden ">
                             <IoSearchSharp className="text-emerald-600 hover:emerald-700" onClick={() => {
@@ -156,7 +159,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
                         </button>
                         {searchScopeDropDown && (
-                            <div className="absolute z-[50] top-full right-0 bg-white shadow-lg rounded-md py-2 min-w-[130px]">
+                            <div className="absolute z-[50] top-full right-0 bg-slate-50 shadow-lg rounded-md py-2 min-w-[130px]">
                                 <button onClick={() => { setSearchScope('jobs'); setSearchScopeDropDown(false); }}
                                     className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between gap-2 
                                             ${searchScope === 'jobs'
@@ -178,7 +181,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
 
 
-                <div className="  flex items-center justify-center gap-4  text-gray-600 font-medium text-md  ">
+                <div ref={navIconsRef} className="  flex items-center justify-center gap-4  text-gray-600 font-medium text-md  ">
                     <NavLink to='/home' 
                     className={({ isActive }) => `relative flex flex-col  items-center justify-center gap-1 hover:text-emerald-700 cursor-pointer ${isActive ? 'text-emerald-700' : 'text-gray-600 hover:text-emerald-700'}`}>
                         
@@ -234,7 +237,10 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                         <div className="hidden  lg:flex flex-col text-sm">Chats</div>
                     </NavLink>
 
-                    <div onClick={() => setDesktopChatModal(!desktopChatModal)}
+                    <div onClick={() => {
+                            setDesktopChatModal(!desktopChatModal);
+                            setActivePanel(null);
+                        }}
                         className="relative hidden   lg:flex flex-col justify-center items-center gap-1 hover:text-emerald-700 cursor-pointer">
                         <div className="relative  h-6 w-6">
                             <PiChatsFill className="w-6 h-6" />
@@ -250,7 +256,10 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                     </div>
 
 
-                    <div onClick={() => setNotificationModal(!notificationModal)}
+                    <div onClick={() => {
+                            setActivePanel(prev => prev === 'notifications' ? null : 'notifications');
+                            setDesktopChatModal(false);
+                        }}
                         className="relative flex flex-col justify-center items-center hover:text-emerald-700 cursor-pointer">
                         <div className="relative  h-6 w-6">
                             <IoNotifications className="w-5 h-5 " />
@@ -278,29 +287,38 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                     </div>
 
 
-                    <div ref={dropdownRef} className=" flex flex-col  items-center justify-center gap-1 hover:text-emerald-700 cursor-pointer">
+                    <div className=" flex flex-col  items-center justify-center gap-1 hover:text-emerald-700 cursor-pointer">
                         <div className='h-6 w-6'>
                             {userData?.profileImage ? (
                                 <img
                                     src={userData.profileImage}
                                     alt="Profile"
-                                    onClick={() => setProfileDropdown(!profileDropdown)}
+                                    onClick={() => {
+                                        setActivePanel(prev => prev === 'profile' ? null : 'profile');
+                                        setDesktopChatModal(false);
+                                    }}
                                     className="w-6 h-6 rounded-full object-cover border-2 border-emerald-500"
                                 />
                             ) : (
                                 <FaUserCircle
-                                    onClick={() => setProfileDropdown(!profileDropdown)}
+                                    onClick={() => {
+                                        setActivePanel(prev => prev === 'profile' ? null : 'profile');
+                                        setDesktopChatModal(false);
+                                    }}
                                     className="w-5 h-5 md:w-5 md:h-5 hover:text-emerald-700"
                                 />
                             )}
                         </div>
                         <div className="hidden lg:flex text-sm flex-col hover:text-emerald-700"
-                            onClick={() => setProfileDropdown(!profileDropdown)}>
+                            onClick={() => {
+                                setActivePanel(prev => prev === 'profile' ? null : 'profile');
+                                setDesktopChatModal(false);
+                            }}>
                             Profile
                         </div>
 
                         {/* Dropdown menu */}
-                        {profileDropdown && (
+                        {activePanel === 'profile' && (
                             <div
                                 className="absolute top-12 right-0 bg-white rounded-xl shadow-lg border border-gray-100 w-48 z-50 overflow-hidden">
 
@@ -315,13 +333,13 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                                 {/* Menu items */}
                                 <div className="flex flex-col py-1">
                                     <button
-                                        onClick={() => { navigate(`/profile/${userData?.userName}`); setProfileDropdown(false); }}
+                                        onClick={() => { navigate(`/profile/${userData?.userName}`); setActivePanel(null); }}
                                         className="px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-left"
                                     >
                                         Profile
                                     </button>
                                     <button
-                                        onClick={() => { setLogoutModal(true); setProfileDropdown(false); }}
+                                        onClick={() => { setLogoutModal(true); setActivePanel(null); }}
                                         className="px-4 py-2 text-sm text-red-500 hover:bg-red-50 text-left"
                                     >
                                         Logout

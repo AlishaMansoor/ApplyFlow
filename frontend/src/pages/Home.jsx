@@ -11,6 +11,9 @@ import EditProfile from '../components/ui/EditProfile.jsx';
 import axios from 'axios';
 import { SearchQueryContext } from '../context/SearchContext.jsx';
 import { JobDataContext } from '../context/JobContext.jsx';
+import JobCardSkeleton from '../components/ui/JobCardSkeleton.jsx';
+import JobCardRecruiterSkeleton from '../components/ui/JobCardRecruiterSkeleton.jsx';
+
 
 const Home = () => {
 
@@ -27,23 +30,24 @@ const Home = () => {
 
 
     React.useEffect(() => {
-     isRecruiter ? fetchMyJobs() : fetchAllJobs();
+        isRecruiter ? fetchMyJobs() : fetchAllJobs();
     }, [isRecruiter]);
 
-    
-    const filteredJobs = React.useMemo(()=>(
-        (searchQuery.trim().toLowerCase() && searchScope == 'jobs' 
-    ) ? jobs.filter((a) =>
-        a.title?.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
-        a.companyName?.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
-        a.skillsRequired?.some(d => d.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+    console.log(userData);
 
-    ) : jobs 
-), [searchQuery, searchScope, jobs]);
+    const filteredJobs = React.useMemo(() => (
+        (searchQuery.trim().toLowerCase() && searchScope == 'jobs'
+        ) ? jobs.filter((a) =>
+            a.title?.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
+            a.companyName?.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
+            a.skillsRequired?.some(d => d.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+
+        ) : jobs
+    ), [searchQuery, searchScope, jobs]);
 
 
     let isProfileIncomplete;
-    
+
 
     if (userData?.userType === 'recruiter') {
         if (!userData?.organization?.organizationName || !userData?.location) {
@@ -56,59 +60,73 @@ const Home = () => {
     }
 
 
+return (
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50">
+        {editProfileOpen && <EditProfile setEditProfileOpen={setEditProfileOpen} />}
 
-    return (
-        <div className="min-h-screen w-full bg-slate-50">
-            {editProfileOpen && <EditProfile setEditProfileOpen={setEditProfileOpen} />}
+        <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-            <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}
-            />
-
-            {/* Mobile sidebar */}
-            <div className="lg:hidden ">
-                <AnimatePresence>
-                    {sidebarOpen && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-                </AnimatePresence>
-            </div>
-
-            {/* Desktop sidebar */}
-            <div className="hidden lg:block">
-                <Sidebar sidebarOpen={true} setSidebarOpen={setSidebarOpen} />
-            </div>
-
-            {/* Main content */}
-            {/* Home.jsx */}
-            <div className=" mt-[80px] lg:ml-[280px] ">
-
-                <div className="max-w-xl mx-auto p-4 lg:max-w-3xl lg:mx-0 lg:px-6">
-                    {loading ? <p>Loading your Jobs...</p> : null}
-                    {jobs.length === 0 && (<p>No Jobs found!</p>)}
-                    {isProfileIncomplete && (
-                        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 mt-2 flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-amber-700">Complete your profile</p>
-                                <p className="text-xs text-amber-600 mt-1">Add your company name and location before posting jobs.</p>
-                            </div>
-                            <button
-                                onClick={() => setEditProfileOpen(true)}
-                                className="bg-amber-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-amber-600"
-                            >
-                                Complete Profile
-                            </button>
-                        </div>
-                    )}
-                    {filteredJobs.length === 0 && searchQuery && (
-                        <p className="text-gray-500 italic">No jobs found for "{searchQuery}"</p>
-                    )}
-                    {!isRecruiter && <JobCardBody filteredJobs={filteredJobs} showHeader={true}/>}
-                    {isRecruiter && <JobCardBodyRecruiter filteredJobs={filteredJobs} isProfileIncomplete={isProfileIncomplete} />}
-
-
-                </div>
-            </div>
+        {/* Mobile sidebar */}
+        <div className="lg:hidden ">
+            <AnimatePresence>
+                {sidebarOpen && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+            </AnimatePresence>
         </div>
 
-    )
+        {/* Desktop sidebar */}
+        <div className="hidden lg:block">
+            <Sidebar sidebarOpen={true} setSidebarOpen={setSidebarOpen} />
+        </div>
+
+        {/* Main content */}
+        {/* Home.jsx */}
+        <div className="mt-[80px] min-h-[calc(100vh-80px)] lg:ml-[280px] flex flex-col">
+
+            <div className={`max-w-xl mx-auto  w-full lg:max-w-3xl lg:mx-0 lg:px-6 flex-1 flex flex-col ${!loading && jobs.length === 0 ? 'items-center justify-center' : ''}`}>
+
+                {isProfileIncomplete && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 mt-2 flex items-center justify-between w-full">
+                        <div>
+                            <p className="text-sm font-medium text-amber-700">Complete your profile</p>
+                            <p className="text-xs text-amber-600 mt-1">Add your company name and location before posting jobs.</p>
+                        </div>
+                        <button
+                            onClick={() => setEditProfileOpen(true)}
+                            className="bg-amber-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-amber-600"
+                        >
+                            Complete Profile
+                        </button>
+                    </div>
+                )}
+
+                {loading ? (
+                    Array.from({ length: 3 }).map((_, index) => (
+                        isRecruiter ? <JobCardRecruiterSkeleton key={index} /> : <JobCardSkeleton key={index} />
+                    ))
+                ) : jobs.length === 0 ? (
+                    <div className="h-[240px] w-[90%] border-gray-200 border shadow-md rounded-md  flex flex-col items-center justify-center text-center px-4">
+                        <p className="text-gray-500 text-base italic">
+                            {isRecruiter ? "You haven't posted any jobs yet." : "No jobs found!"}
+                        </p>
+                        <p className="text-gray-400 text-xs italic mt-1">
+                            {isRecruiter ? "Post your first job to get started." : "Check back later for new openings."}
+                        </p>
+                    </div>
+                ) : (
+                    <>
+                        {filteredJobs.length === 0 && searchQuery && (
+                            <p className="text-gray-500 italic mt-4">No jobs found for "{searchQuery}"</p>
+                        )}
+
+                        {!isRecruiter && <JobCardBody filteredJobs={filteredJobs} showHeader={true} />}
+                        {isRecruiter && <JobCardBodyRecruiter filteredJobs={filteredJobs} isProfileIncomplete={isProfileIncomplete} />}
+                    </>
+                )}
+
+            </div>
+        </div>
+    </div>
+)
 }
 
 export default Home
