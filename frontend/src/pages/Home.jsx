@@ -10,50 +10,36 @@ import JobCardBodyRecruiter from '../components/jobs/JobCardBodyRecruiter.jsx';
 import EditProfile from '../components/ui/EditProfile.jsx';
 import axios from 'axios';
 import { SearchQueryContext } from '../context/SearchContext.jsx';
+import { JobDataContext } from '../context/JobContext.jsx';
 
 const Home = () => {
 
     const { userData } = React.useContext(UserDataContext);
     const { serverUrl } = React.useContext(AuthDataContext);
+    const { jobs, setJobs, fetchAllJobs, fetchMyJobs, loading } = React.useContext(JobDataContext);
     const { searchQuery, searchScope } = React.useContext(SearchQueryContext);
     const isRecruiter = userData?.userType === 'recruiter';
     const [sidebarOpen, setSidebarOpen] = React.useState(window.innerWidth >= 1024);
     // const [searchQuery, setSearchQuery] = React.useState('');
-    const [loading, setLoading] = React.useState(false);
-    const [jobs, setJobs] = React.useState([]);
+    // const [loading, setLoading] = React.useState(false);
+    // const [jobs, setJobs] = React.useState([]);
     const [editProfileOpen, setEditProfileOpen] = React.useState(false);
 
 
     React.useEffect(() => {
-        const fetchjobs = async () => {
-            setLoading(true);
-            try {
-                if (isRecruiter) {
-                    const result = await axios.get(serverUrl + '/api/job/getmyjobs', { withCredentials: true });
-                    setJobs(result.data.jobs ?? []);
-                    // console.log(result.data);
-                } else if (!isRecruiter) {
-                    const result = await axios.get(serverUrl + '/api/job/alljobs', { withCredentials: true });
-                    setJobs(result.data.jobs ?? []);
-                    // console.log(result.data);
-                }
-            } catch (e) {
-                console.error("Error fetching jobs:", e);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchjobs();
-    }, []);
-
+     isRecruiter ? fetchMyJobs() : fetchAllJobs();
+    }, [isRecruiter]);
 
     
-    const filteredJobs = (searchQuery.trim().toLowerCase() && searchScope == 'jobs' ) ? jobs.filter((a) =>
+    const filteredJobs = React.useMemo(()=>(
+        (searchQuery.trim().toLowerCase() && searchScope == 'jobs' 
+    ) ? jobs.filter((a) =>
         a.title?.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
         a.companyName?.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
         a.skillsRequired?.some(d => d.toLowerCase().includes(searchQuery.trim().toLowerCase()))
 
-    ) : jobs;
+    ) : jobs 
+), [searchQuery, searchScope, jobs]);
 
 
     let isProfileIncomplete;

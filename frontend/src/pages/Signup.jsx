@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { UserDataContext } from '../context/UserContext.jsx';
 import { LuBriefcaseBusiness } from "react-icons/lu";
 
+
+
+
+
 const Signup = () => {
   const navigate = useNavigate();
   const { setUserData } = React.useContext(UserDataContext);

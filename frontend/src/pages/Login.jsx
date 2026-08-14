@@ -9,6 +9,8 @@ import { LuBriefcaseBusiness } from "react-icons/lu";
 import { FaTimes } from 'react-icons/fa';
 import { RxCross2 } from 'react-icons/rx';
 
+
+
 const Login = () => {
   const { serverUrl } = useContext(AuthDataContext);
   const { setUserData } = useContext(UserDataContext);
@@ -20,12 +22,19 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+
+
   // Forgot Password Modal State
   const [showModal, setShowModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [modalLoading, setModalLoading] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalError, setModalError] = useState("");
+
+
+
+
+
 
 
   const loginhandler = async (e) => {
@@ -43,6 +52,7 @@ const Login = () => {
         email,
         password
       }
+      // await new Promise(resolve => setTimeout(resolve, 5000)); // testing login spinner
       const result = await axios.post(serverUrl + "/api/auth/login", logindata, { withCredentials: true })
       console.log("LOGIN SUCCESS:", result.data);
       setUserData(result.data.user);
@@ -90,6 +100,7 @@ const Login = () => {
     }
   };
 
+
   return (
     <div className="w-full h-screen flex justify-start items-center flex-col gap-[30px] bg-[white]">
       <div className="w-full h-[80px] bg-[#f2f1f1] flex items-center px-5 ">
@@ -113,7 +124,16 @@ const Login = () => {
             Forgot Password?
           </button>
         </div>
-        <button type='submit' disabled={loading} className='w-full bg-emerald-600 text-white text-lg mt-8 p-2 rounded-full'>{loading ? "Signing In..." : "Sign In"}</button>
+        <button type='submit' disabled={loading} className='w-full bg-emerald-600 text-white text-lg mt-8 p-2 rounded-full flex items-center justify-center gap-2 disabled:opacity-70'>
+          {loading ? (
+          <>
+            <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+            Logging in...
+          </>
+        ) : (
+          "Sign In"
+        )}
+        </button>
         {error && <p className=" w-full text-red-500 text-lg mt-2 ml-3">*{error}</p>}
         <p className='text-center mt-3'>Don't have an account? <Link to='/signup' className='text-emerald-600 text-decoration-underline'>Sign up</Link></p>
       </form>
@@ -122,7 +142,7 @@ const Login = () => {
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-50">
           <div className="bg-white w-[90%] max-w-[400px] px-5 py-6 rounded-2xl relative flex flex-col items-center shadow-lg text-gray-600">
             <button type="button" onClick={() => setShowModal(false)} className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 cursor-pointer text-xl">
-              <RxCross2 className="text-gray-600 w-6 h-6"/>
+              <RxCross2 className="text-gray-600 w-6 h-6" />
             </button>
 
             <h2 className="text-xl font-semibold mb-4 mt-2">Reset Password</h2>
