@@ -60,6 +60,8 @@ app.set('onlineUsers', onlineUsers); // Make the onlineUsers instance available 
 
 // app.get("/", (req, res) => { res.send('Backend is running') });
 
+app.get("/api/health", (req,res)=>{return res.status(200).json({message:"Backend is running"})});
+
 app.use('/api/auth', authrouter);
 app.use('/api/user', userrouter);
 app.use('/api/job', jobrouter);
