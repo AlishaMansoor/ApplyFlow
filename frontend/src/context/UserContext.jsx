@@ -7,10 +7,12 @@ export const UserDataContext = createContext();//the context object which will b
 const UserContext = ({ children }) => {//the actual component of this file which will wrap the entire app and provide user data to all components through context
     let { serverUrl } = useContext(AuthDataContext);
     let [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); //
 
     const getcurrUser = async () => {
         try {
+
+            // await new Promise(resolve => setTimeout(resolve, 15000));//testing for cold server because of vercel
             // console.log("Fetching current user data from backend...");
             const result = await axios.get(serverUrl + "/api/user/currentuser", { withCredentials: true });
 
