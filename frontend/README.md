@@ -1,3 +1,10 @@
+handling cold server problem
+Scenario: User logs in, closes laptop, comes back after 6 days, hits vercel url
+Bundle loads first — the browser downloads your JS/CSS from Vercel's CDN. This is usually fast (seconds at most, often less) since Vercel serves static assets from edge, and it doesn't touch your Render backend at all
+App mounts, UserContext fires getcurrUser() — this sends the request with the sessionId cookie to your Render backend, asking "is this session still valid, who's the user?" This is the request that hits your cold Render server. While this is in flight, loading in UserDataContext is true, App.jsx renders <AuthLoadingOverlay isLoading={true} /> instead of any routes — so the user sees your spinner + rotating messages ("Waking up the server...") for however long the cold start takes.
+Request resolves — server wakes up, validates the session, returns userData. loading flips to false. App.jsx now renders the actual routes, sees userData exists sends them to /home.
+Home mounts, fires fetchAllJobs() / fetchMyJobs() — by this point, the server is already warm, so this second request should be fast. But if it's not instant, this is where JobCardSkeleton shows in the jobs section while that specific fetch is in flight.
+
 "object with keys {min, max, currency} is not valid as a React child, React can render objects, if want to render a colection of children use array instead. Got this to know while rendering salaryRange inside job model because it is an object with feilds min,max, currency  "
 
 Props is for components that can see each other
