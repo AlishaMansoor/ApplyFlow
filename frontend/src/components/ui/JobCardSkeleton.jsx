@@ -2,7 +2,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 const JobCardSkeleton = () => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-4 sm:mb-6">
+    <div className="bg-slate-50 mt-2 rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-4 sm:mb-6">
         <div className="p-4 sm:p-6">
             {/* Title row + location */}
             <div className="flex justify-between items-start mb-1 gap-2">
