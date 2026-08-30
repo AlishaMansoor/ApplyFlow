@@ -211,7 +211,7 @@ const InterviewPrep = () => {
                                 </div>
                                 <div className="flex flex-wrap my-2 gap-3">
                                     <label className="flex items-center text-center text-sm font-medium text-gray-700">Question Count :</label>
-                                    {['10', '20', '30', '50'].map((c) => (
+                                    {['10', '20', '30'].map((c) => (
                                         <button key={c} onClick={() => setQcount(c.toLowerCase())} className={`px-4 py-1 rounded-full text-sm font-medium border transition-all ${qcount === c.toLowerCase()
                                             ? 'bg-emerald-500 text-white border-emerald-500'      // active
                                             : 'bg-white text-gray-500 border-gray-200 hover:border-emerald-400'  // inactive
