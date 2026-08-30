@@ -13,6 +13,8 @@ export const getUserApplications = async (req, res) => {
     }
 }
 
+
+
 export const applyToJob = async (req, res) => {
     try {
         const jobId = req.body.jobId;
@@ -52,6 +54,8 @@ export const applyToJob = async (req, res) => {
     }
 }
 
+
+
 export const deleteApplication = async (req, res) => {
     try {
         const { applicationId } = req.params;
@@ -73,13 +77,19 @@ export const deleteApplication = async (req, res) => {
     }
 }
 
+
+
+
+
 //recruiter route
 export const getApplicantsForJob = async (req, res) => {
     try {
         const jobId = req.params.jobId;
+
         if (!jobId) {
             return res.status(400).json({ message: "Job ID is required" });
         }
+        
         const recruiterId = req.user.userid;
         // console.log("applycontrollers, getApplicationsForJob controller:Fetching applicants for jobId:", jobId, "by recruiterId:", recruiterId);
 
@@ -100,6 +110,12 @@ export const getApplicantsForJob = async (req, res) => {
         res.status(500).json({ message: "Error fetching applicants", error: e.message });
     }
 }
+
+
+
+
+
+
 
 export const updateApplicationStatus = async (req, res) => {
 

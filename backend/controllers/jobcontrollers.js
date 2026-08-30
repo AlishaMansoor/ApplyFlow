@@ -258,7 +258,7 @@ export const postJob = async (req, res) => {
             return "Salary range must be a valid object";
         }
 
-        
+
         const minVal = Number(salaryRange.min);
         const maxVal = Number(salaryRange.max);
 
@@ -342,13 +342,13 @@ export const deleteJob = async (req, res) => {
 export const updateJob = async (req, res) => {
     try {
         // 1. Place this inside your updateJob controller to inspect the incoming data
-console.log("---------------- DEBUG START ----------------");
+        // console.log("---------------- DEBUG START ----------------");
 
         const { jobId } = req.params;
         const { experience, status, jobType, description } = req.body;
-console.log("Logged-in req.user object:", req.user); 
+        // console.log("Logged-in req.user object:", req.user); 
 
-    
+
         const cleanJobType = typeof jobType === 'string' ? jobType.trim() : '';
         const cleanStatus = typeof status === 'string' ? status.trim() : '';
         const cleanDescription = typeof description === 'string' ? description.trim() : '';
@@ -357,31 +357,31 @@ console.log("Logged-in req.user object:", req.user);
         if (!cleanStatus) return res.status(400).json({ message: "Status is required" });
         if (!cleanDescription) return res.status(400).json({ message: "Description is required" });
 
-        
+
         const expNum = Number(experience);
         if (experience === undefined || experience === null || experience === "" || isNaN(expNum)) {
             return res.status(400).json({ message: "Experience must be a valid number" });
         }
 
-        
+
         const job = await Job.findById(jobId);
         if (!job) {
             return res.status(404).json({ message: "Job not found" }); // Added missing "return" and updated to 404
         }
 
-        console.log("job.postedBy value:", job.postedBy);
+        // console.log("job.postedBy value:", job.postedBy);
 
         if (job.postedBy.toString() !== req.user.userid.toString()) {
             return res.status(403).json({ message: "Unauthorized — you can only update your own jobs" });
         }
 
-        
+
         const difference = Math.abs(expNum - Number(job.experience));
         if (isNaN(difference) || difference > 1) {
             return res.status(400).json({ message: "Experience can only be updated by one unit at a time" });
         }
 
-       
+
         if (!["Full-time", "Part-time", "Contract", "Remote", "Hybrid", "Internship"].includes(cleanJobType)) {
             return res.status(400).json({ message: "Invalid job type" });
         }
@@ -389,15 +389,15 @@ console.log("Logged-in req.user object:", req.user);
             return res.status(400).json({ message: "Status must be Open or Closed" });
         }
 
-       
+
         const updatedJob = await Job.findByIdAndUpdate(
-            jobId, 
-            { experience: expNum, status: cleanStatus, jobType: cleanJobType, description: cleanDescription }, 
+            jobId,
+            { experience: expNum, status: cleanStatus, jobType: cleanJobType, description: cleanDescription },
             { new: true }
-        ); 
+        );
 
         return res.status(200).json({ message: "Job updated successfully", job: updatedJob });
-console.log("----------------- DEBUG END -----------------");
+        // console.log("----------------- DEBUG END -----------------");
     } catch (e) {
         console.error("Error updating job:", e.message);
         return res.status(500).json({ message: "Backend error updating job", error: e.message });
