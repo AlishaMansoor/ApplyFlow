@@ -33,7 +33,7 @@ const Home = () => {
         isRecruiter ? fetchMyJobs() : fetchAllJobs();
     }, [isRecruiter]);
 
-    console.log(userData);
+    // console.log(userData);
 
     const filteredJobs = React.useMemo(() => (
         (searchQuery.trim().toLowerCase() && searchScope == 'jobs'
@@ -82,7 +82,7 @@ return (
         {/* Home.jsx */}
         <div className="mt-[80px] min-h-[calc(100vh-80px)] lg:ml-[280px] flex flex-col">
 
-            <div className={`max-w-xl mx-auto  w-full lg:max-w-3xl lg:mx-0 lg:px-6 flex-1 flex flex-col ${!loading && jobs.length === 0 ? 'items-center justify-center' : ''}`}>
+            <div className={`p-4 max-w-xl mx-auto  w-full lg:max-w-3xl lg:mx-0 lg:px-6 flex-1 flex flex-col ${!loading && jobs.length === 0 ? 'items-center justify-center' : ''}`}>
 
                 {isProfileIncomplete && (
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 mt-2 flex items-center justify-between w-full">
