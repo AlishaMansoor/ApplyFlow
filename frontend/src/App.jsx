@@ -19,6 +19,7 @@ import Chats from './pages/ChatPage.jsx';
 import Settings from './pages/Settings.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import AuthLoadingOverlay from './components/ui/AuthLoadingOverlay.jsx';
+import InterviewPrep from './pages/InterviewPrep.jsx';
 
 const Profile = lazy(() => import('./pages/ProfilePage.jsx'));
 const SavedApplication = lazy(() => import('./pages/SavedJobs.jsx'));
@@ -60,6 +61,7 @@ const App = () => {
         <Route path='/job/:id' element={userData?.userType === 'candidate' ? <JobDetails /> : <Navigate to="/home" />} />
         <Route path='/myapplications' element={userData?.userType === 'candidate' ? <MyApplications /> : <Navigate to="/home" />} />
         <Route path='/savedapplications' element={userData?.userType === 'candidate' ? <SavedApplication /> : <Navigate to="/home" />} />
+        <Route path='/interview-prep' element={userData?.userType === 'candidate' ? <InterviewPrep /> : <Navigate to="/home" />} />
 
         {/* Recruiter only */}
         <Route path='/applicant/:id' element={userData?.userType === 'recruiter' ? <ApplicantDetail /> : <Navigate to="/home" />} />

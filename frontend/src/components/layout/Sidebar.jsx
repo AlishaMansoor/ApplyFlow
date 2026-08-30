@@ -11,7 +11,7 @@ import { IoMoon } from "react-icons/io5";
 import { IoSettings } from "react-icons/io5";
 import { IoLogOut } from "react-icons/io5";
 import { TbFileCv } from "react-icons/tb";
-import { BsBriefcaseFill } from "react-icons/bs";
+import { TbFileTextAi } from "react-icons/tb";
 import { MdPostAdd } from "react-icons/md";
 import EditProfile from '../ui/EditProfile.jsx';
 import LogoutModal from '../ui/LogoutModal.jsx';
@@ -122,6 +122,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             className=" w-full pl-3 py-1.5 flex items-center gap-2 mb-1 hover:bg-gray-200 hover:text-emerald-900 hover:rounded-md cursor-pointer">
                             <TbFileCv className="text-xl" /><span className='text-sm'>Resume</span>
                         </div>
+
+                         <NavLink to='/interview-prep'
+                            className={({ isActive }) => ` w-full pl-3 py-1.5 flex items-center gap-2 mb-1 hover:text-emerald-900 hover:rounded-md cursor-pointer ${isActive ? 'text-emerald-600' : 'hover:bg-gray-200 '}`}>
+                            <TbFileTextAi className="text-lg" /><span className='text-sm'>Interview Preparation</span>
+                        </NavLink>
 
                     </>
                 )}
