@@ -65,7 +65,7 @@ export const interviewPrep = async (req, res) => {
 
         //calling gemini
         const model = AI.getGenerativeModel({
-            model: "gemini-3.6-flash",
+            model: "gemini-2.0-flash-exp",
             generationConfig: { responseMimeType: "application/json" }
         });
 
