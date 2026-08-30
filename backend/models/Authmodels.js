@@ -75,6 +75,10 @@ const userSchema = new mongoose.Schema({
             ref: "Job",
         },
     ],
+    aiGenerations: {
+        count: { type: Number, default: 0 },
+        lastReset: { type: Date, default: Date.now }
+    },
     // For recruiters
 
     organization: {

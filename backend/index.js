@@ -15,6 +15,7 @@ import conversationrouter from './routes/conversation.routes.js'
 import messagerouter from './routes/message.routes.js';
 import inviterouter from './routes/invite.routes.js'
 import notificationrouter from './routes/notification.routes.js'
+import airouter from './routes/ai.routes.js'
 import cors from 'cors'
 
 import mongoose from 'mongoose';
@@ -71,6 +72,7 @@ app.use('/api/conversation', conversationrouter);
 app.use('/api/messages', messagerouter);
 app.use('/api/invite', inviterouter);
 app.use('/api/notification', notificationrouter);
+app.use('/api/ai', airouter);
 
 const httpServer = createServer(app); // wraps fully-configured Express app inside a raw Node http server
 
