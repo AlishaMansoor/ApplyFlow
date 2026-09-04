@@ -6,7 +6,8 @@ import { FaCheck } from "react-icons/fa";
 import { AuthDataContext } from '../../context/AuthContext.jsx'
 import { UserDataContext } from '../../context/UserContext.jsx';//for accessing userData and setUserData
 import axios from 'axios';
-
+import { isDemo } from '../../utils/demoguardfunc.js';
+import { toast } from 'react-toastify';
 
 
 
@@ -129,6 +130,12 @@ function EditProfile({ setEditProfileOpen }) {
         setLoading(true);
         setError("");
         setSuccess("");
+
+        if(isDemo(userData)){
+            toast.error("Editing profile is disabled for demo users.");
+            setLoading(false);
+            return;
+        }
 
         if (!firstName || !lastName || !userName) {
             setError("Please fill in all required fields.");

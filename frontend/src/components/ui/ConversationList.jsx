@@ -50,35 +50,39 @@ const ConversationList = ({ onClose, isModal = false }) => {
 
   const location = useLocation();
 
+  const isMounted = React.useRef(true);
+//to stop post-unmount processing
+  React.useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false; // Cleanup on unmount
+    };
+  }, []);
 
   React.useEffect(() => {
     if (activeSection === 'invites') {
       setInviteModal(true);
       fetchInvites();
-      setActiveSection(null); // reset after opening
+      setActiveSection(null);
     } else if (activeSection === 'requests') {
       setRequestsModal(true);
-      setActiveSection(null); // reset after opening
+      setActiveSection(null);
     }
 
-    // from location.state (small screen — navigation)
+    // Handle location state for mobile navigation
     if (location.state?.targetSection) {
       const target = location.state.targetSection;
       if (target === 'invites') {
         setInviteModal(true);
-        // console.log("i can do both!");
         fetchInvites();
       } else if (target === 'requests') {
         setRequestsModal(true);
-        // console.log("Nails, hair, hips, heels!");
       }
-
-      // Clearing the history state immediately so it doesn't re-trigger on next render
-      window.history.replaceState({ ...location.state, targetSection: undefined }, document.title);
+      console.log("cleaning up");
+      // Cleanly wipe location state using React Router
+      navigate(location.pathname, { replace: true, state: {} });
     }
-
-
-  }, [activeSection, location.state]);
+  }, [activeSection, location.state, navigate, location.pathname]);
 
   React.useEffect(() => {
     const targetUserId = location.state?.autoSelectUserId;
@@ -89,10 +93,53 @@ const ConversationList = ({ onClose, isModal = false }) => {
       );
       if (matchingChat) {
         setSelectedConversation(matchingChat);
-        window.history.replaceState({ ...location.state, autoSelectUserId: undefined }, document.title);
+        // Cleanly wipe autoSelectUserId state
+        navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [chats, location.state?.autoSelectUserId]);
+  }, [chats, location.state?.autoSelectUserId, navigate, location.pathname]);
+  // React.useEffect(() => {
+  //   if (activeSection === 'invites') {
+  //     setInviteModal(true);
+  //     fetchInvites();
+  //     setActiveSection(null); // reset after opening
+  //   } else if (activeSection === 'requests') {
+  //     setRequestsModal(true);
+  //     setActiveSection(null); // reset after opening
+  //   }
+
+  //   // from location.state (small screen — navigation)
+  //   if (location.state?.targetSection) {
+  //     const target = location.state.targetSection;
+  //     if (target === 'invites') {
+  //       setInviteModal(true);
+  //       // console.log("i can do both!");
+  //       fetchInvites();
+  //     } else if (target === 'requests') {
+  //       setRequestsModal(true);
+  //       // console.log("Nails, hair, hips, heels!");
+  //     }
+
+  //     // Clearing the history state immediately so it doesn't re-trigger on next render
+  //     window.history.replaceState({ ...location.state, targetSection: undefined }, document.title);
+  //   }
+
+
+  // }, [activeSection, location.state]);
+
+  // React.useEffect(() => {
+  //   const targetUserId = location.state?.autoSelectUserId;
+
+  //   if (targetUserId && chats.length > 0) {
+  //     const matchingChat = chats.find(c =>
+  //       c.participants.some(p => p._id === targetUserId)
+  //     );
+  //     if (matchingChat) {
+  //       setSelectedConversation(matchingChat);
+  //       window.history.replaceState({ ...location.state, autoSelectUserId: undefined }, document.title);
+  //     }
+  //   }
+  // }, [chats, location.state?.autoSelectUserId]);
 
 
 
@@ -200,7 +247,7 @@ const ConversationList = ({ onClose, isModal = false }) => {
 
 
   return (
-    <div className={`w-full bg-gray-50 ${isModal ? 'h-full' : 'h-full md:w-86 '} h-full overflow-y-auto  flex flex-col items-start justify-start  `}>
+    <div onClick={(e) => e.stopPropagation()} className={`w-full bg-gray-50 ${isModal ? 'h-full' : 'h-full md:w-86 '} h-full overflow-y-auto  flex flex-col items-start justify-start  `}>
 
       {/* Header */}
       <div className="p-4  w-full border-b border-gray-200 flex items-center justify-start flex-shrink-0">
@@ -239,7 +286,7 @@ const ConversationList = ({ onClose, isModal = false }) => {
           {requestData.map((req, index) => {
             const isRequestLoading = loadingRequests.includes(req._id);
             return (
-              <div key={index} className="w-full flex items-center  justify-between p-2 ">
+              <div key={req._id} className="w-full flex items-center  justify-between p-2 ">
                 <div className=" flex gap-2">
                   <img src={req.senderId.profileImage || null} alt="" className="w-10 h-10 rounded-full border " />
                   <div className="">
@@ -247,23 +294,29 @@ const ConversationList = ({ onClose, isModal = false }) => {
                     <p className="text-xs italic text-gray-500">@{req.senderId.userName}</p>
                   </div>
                 </div>
-                
-                 <div className="flex items-center min-w-[50px] justify-end">
-                      {isRequestLoading ? (
-                        /* Single shared spinner shown during accept OR reject */
-                        <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        /* Normal Buttons */
-                        <div className="flex gap-3">
-                          <button onClick={() => rejectRequest(req._id)}>
-                            <RxCross2 className="w-5 h-5 stroke-[1] text-red-500 hover:text-red-600" />
-                          </button>
-                          <button onClick={() => acceptRequest(req._id)}>
-                            <FaCheck className="w-4 h-4 text-emerald-600 hover:text-emerald-700" />
-                          </button>
-                        </div>
-                      )}
+
+                <div className="flex items-center min-w-[50px] justify-end">
+                  {isRequestLoading ? (
+                    /* Single shared spinner shown during accept OR reject */
+                    <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    /* Normal Buttons */
+                    <div className="flex gap-3">
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        rejectRequest(req._id);
+                      }}>
+                        <RxCross2 className="w-5 h-5 stroke-[1] text-red-500 hover:text-red-600" />
+                      </button>
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        acceptRequest(req._id);
+                      }}>
+                        <FaCheck className="w-4 h-4 text-emerald-600 hover:text-emerald-700" />
+                      </button>
                     </div>
+                  )}
+                </div>
               </div>
             )
           })}
@@ -315,7 +368,7 @@ const ConversationList = ({ onClose, isModal = false }) => {
                       </div>
                     </div>
 
-                  
+
                     <div className="flex items-center min-w-[50px] justify-end">
                       {isInviteLoading ? (
                         /* Single shared spinner shown during accept OR reject */
@@ -323,10 +376,16 @@ const ConversationList = ({ onClose, isModal = false }) => {
                       ) : (
                         /* Normal Buttons */
                         <div className="flex gap-3">
-                          <button onClick={() => rejectInvite(req._id)}>
+                          <button onClick={(e) => {
+                            e.stopPropagation();
+                            rejectInvite(req._id);
+                          }}>
                             <RxCross2 className="w-5 h-5 stroke-[1] text-red-500 hover:text-red-600" />
                           </button>
-                          <button onClick={() => acceptInvite(req._id)}>
+                          <button onClick={(e) => {
+                            e.stopPropagation();
+                            acceptInvite(req._id);
+                          }}>
                             <FaCheck className="w-4 h-4 text-emerald-600 hover:text-emerald-700" />
                           </button>
                         </div>
@@ -352,7 +411,10 @@ const ConversationList = ({ onClose, isModal = false }) => {
             return (
               <div
                 key={chat._id}
-                onClick={() => handleChatClick(chat)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleChatClick(chat);
+                }}
                 className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50
                   ${selectedConversation?._id === chat._id ? 'bg-emerald-50' : ''}`}
               >

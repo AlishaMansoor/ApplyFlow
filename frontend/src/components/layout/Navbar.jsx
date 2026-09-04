@@ -108,19 +108,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
         <div>
             {editProfileOpen && (<EditProfile setEditProfileOpen={setEditProfileOpen} />)}
             {logoutModal && <LogoutModal setLogoutModal={setLogoutModal} />}
-            {activePanel === 'notifications' && <NotificationModal setNotificationModal={() => setActivePanel(null)} />}
+            {/* {activePanel === 'notifications' && <NotificationModal setNotificationModal={() => setActivePanel(null)} />} */}
 
-            {desktopChatModal && (
-                <div className="hidden lg:flex fixed bottom-5 right-6 w-96 h-[470px] bg-gray-50 border border-gray-200  rounded-xl z-50 overflow-hidden flex-col shadow-[8px_8px_16px_rgba(0,0,0,0.08)]">
 
-                    {activeDesktopTab === 'ChatWindow' ? (
-                        <ConversationList isModal={true} onClose={() => setDesktopChatModal(false)} />
-                    ) : (
-                        <ChatWindow conversation={selectedConversation} isModal={true} />
-                    )}
-
-                </div>
-            )}
 
             <div className="w-full fixed h-[80px] bg-[#f2f1f1] flex items-center justify-between px-6 md:pr-10  top-0 z-40 shadow-md left-0">
 
@@ -182,25 +172,38 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
 
                 <div ref={navIconsRef} className="  flex items-center justify-center gap-4  text-gray-600 font-medium text-md  ">
-                    <NavLink to='/home' 
-                    className={({ isActive }) => `relative flex flex-col  items-center justify-center gap-1 hover:text-emerald-700 cursor-pointer ${isActive ? 'text-emerald-700' : 'text-gray-600 hover:text-emerald-700'}`}>
-                        
-                            {isRecruiter ? (
-                                <div className="flex flex-col items-center gap-1">
+
+                    {desktopChatModal && (
+                        <div className="hidden lg:flex fixed bottom-5 right-6 w-96 h-[470px] bg-gray-50 border border-gray-200  rounded-xl z-50 overflow-hidden flex-col shadow-[8px_8px_16px_rgba(0,0,0,0.08)]">
+
+                            {activeDesktopTab === 'ChatWindow' ? (
+                                <ConversationList isModal={true} onClose={() => setDesktopChatModal(false)} />
+                            ) : (
+                                <ChatWindow conversation={selectedConversation} isModal={true} />
+                            )}
+
+                        </div>
+                    )}
+
+                    <NavLink to='/home'
+                        className={({ isActive }) => `relative flex flex-col  items-center justify-center gap-1 hover:text-emerald-700 cursor-pointer ${isActive ? 'text-emerald-700' : 'text-gray-600 hover:text-emerald-700'}`}>
+
+                        {isRecruiter ? (
+                            <div className="flex flex-col items-center gap-1">
                                 <div className='h-6 w-6 flex items-center justify-center'>
-                                    <IoHome className="w-5 h-5  " />  
+                                    <IoHome className="w-5 h-5  " />
                                 </div>
                                 <div className="hidden lg:flex flex-col text-sm">Home</div>
-                                </div>
-                            ) : (
-                                 <div className="flex flex-col items-center gap-1">
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center gap-1">
                                 <div className='h-6 w-6 flex items-center justify-center'>
-                                    <FaBriefcase className="w-5 h-5  " />  
+                                    <FaBriefcase className="w-5 h-5  " />
                                 </div>
                                 <div className="hidden lg:flex flex-col text-sm ">Explore</div>
-                                </div>
-                            )}
-                            
+                            </div>
+                        )}
+
 
                     </NavLink>
 
@@ -238,9 +241,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                     </NavLink>
 
                     <div onClick={() => {
-                            setDesktopChatModal(!desktopChatModal);
-                            setActivePanel(null);
-                        }}
+                        setDesktopChatModal(!desktopChatModal);
+                        setActivePanel(null);
+                    }}
                         className="relative hidden   lg:flex flex-col justify-center items-center gap-1 hover:text-emerald-700 cursor-pointer">
                         <div className="relative  h-6 w-6">
                             <PiChatsFill className="w-6 h-6" />
@@ -255,8 +258,10 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                         <div className="hidden lg:flex flex-col text-sm">Chats</div>
                     </div>
 
-
-                    <div onClick={() => {
+                    {/* 
+                    <div 
+                    
+                    onClick={() => {
                             setActivePanel(prev => prev === 'notifications' ? null : 'notifications');
                             setDesktopChatModal(false);
                         }}
@@ -270,12 +275,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                                 </span>
                             )}
                         </div>
-                        {/* {notificationCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-red-500 text-white p-1 text-[10px] font-semibold rounded-full w-4 h-4 
-                     flex items-center justify-center">
-                                {noticationCount > 9 ? '9+' : notificationCount}
-                            </span>
-                        )} */}
+                       
                         {isRecruiter ?
                             <div className="hidden lg:flex flex-col text-sm">
                                 Notifications
@@ -284,6 +284,45 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                                 Notifi..
                             </div>}
 
+                    </div> */}
+                    <div ref={navIconsRef} className="relative">
+                        {/* Icon button */}
+                        <div
+                            onClick={() => {
+                                setActivePanel(prev => prev === 'notifications' ? null : 'notifications');
+                                setDesktopChatModal(false);
+                            }}
+                            className="relative flex flex-col justify-center items-center hover:text-emerald-700 cursor-pointer"
+                        >
+                            <div className="relative h-6 w-6">
+                                <IoNotifications className="w-5 h-5" />
+                                {notificationCount > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white p-1 text-[10px] font-semibold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">
+                                        {notificationCount > 9 ? '9+' : notificationCount}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+
+
+                        {isRecruiter ?
+                            <div className="hidden lg:flex flex-col text-sm">
+                                Notifications
+                            </div> :
+                            <div className="hidden lg:flex flex-col text-sm">
+                                Notifi..
+                            </div>
+                        }
+
+
+
+
+
+                        {/* Render Modal inside the ref container */}
+                        {activePanel === 'notifications' && (
+                            <NotificationModal setNotificationModal={() => setActivePanel(null)} />
+                        )}
                     </div>
 
 

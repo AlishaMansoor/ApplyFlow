@@ -7,6 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { UserDataContext } from '../../context/UserContext.jsx';
 import { AuthDataContext } from '../../context/AuthContext.jsx';
 import DeleteResumeModal from './DeleteResumeModal.jsx';
+import { isDemo } from '../../utils/demoguardfunc.js';
+import { toast } from 'react-toastify';
+
+
 
 function UploadResume({ setResumeOpen }) {
 
@@ -29,6 +33,11 @@ function UploadResume({ setResumeOpen }) {
                 return;
             }
             setLoading(true);
+            if(isDemo(userData)){
+                toast.error("Changing resume is disabled for demo users.");
+                setLoading(false);
+                return;
+            }
             const formData = new FormData();
             formData.append("resume", selectedFile);
             const response = await axios.put(serverUrl + "/api/user/updateresume", formData,
@@ -44,14 +53,14 @@ function UploadResume({ setResumeOpen }) {
             setSuccess("Resume uploaded successfully!");
         } catch (e) {
             console.log("Error in uploading resume", e);
-            setError("Failed to upload resume.");
+            setError(e.response?.data.error  || "Failed to upload resume.");
         }
     }
 
 
 
     const HandleFileChange = (e) => {
-        console.log("file changed", e.target.files[0]);
+        // console.log("file changed", e.target.files[0]);
         const file = e.target.files[0];
         setError("");
         setSuccess("");
@@ -128,7 +137,7 @@ function UploadResume({ setResumeOpen }) {
                                     </div>
                                 </div>
                                 <a href={getViewableResumeUrl(userData.resume)} target="_blank" rel="noopener noreferrer" className="bg-emerald-500 hover:bg-emerald-600 text-center p-2 text-sm font-medium text-white  rounded-md w-full">View current resume</a>
-                                {console.log("Resume URL:", userData.resume)}
+                                {/* {console.log("Resume URL:", userData.resume)} */}
                                 {/* <iframe
                                     src={getPdfUrl(userData.resume)}
                                     className="w-full rounded-md border border-emerald-200"
@@ -139,12 +148,18 @@ function UploadResume({ setResumeOpen }) {
                             <div className="pl-2 pr-2 gap-2 flex flex-col rounded-md ">
                                 <button
                                     className="bg-emerald-500 hover:bg-emerald-600 text-center p-2 text-sm font-medium text-white  rounded-md w-full mt-1"
-                                    onClick={() => { setResumeInputTrigger(true) }}>
+                                    onClick={() => {setResumeInputTrigger(true) }}>
                                     Change resume
                                 </button>
                                 <button
                                     className="bg-red-500 hover:bg-red-600 text-center p-2 text-sm font-medium text-white  rounded-md w-full mt-1"
-                                    onClick={() => setDeleteResumeModal(true)}>
+                                    onClick={() => {
+                                         if(isDemo(userData)){
+                                            toast.error("Changing resume is disabled for demo users.");
+                                            return;
+                                        }
+                                        setDeleteResumeModal(true)
+                                    }}>
                                     Delete resume
                                 </button>
                                 {deleteResumeModal && <DeleteResumeModal setDeleteResumeModal={setDeleteResumeModal} />}

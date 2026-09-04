@@ -62,6 +62,7 @@ setNotificationCount } = React.useContext(ChatDataContext);
 
 
   const handleNotificationClick = async (notif) => {
+    console.log("Notification clicked:", notif);
     await markAsRead(notif._id);
     setNotificationCount(prev => Math.max(0, prev-1));
     setNotificationModal(false);

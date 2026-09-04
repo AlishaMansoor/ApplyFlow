@@ -39,6 +39,7 @@ const InterviewPrep = () => {
     const [controller, setController] = React.useState(null);
 
     const [loadingMsgIndex, setLoadingMsgIndex] = React.useState(0);
+
     React.useEffect(() => {
         if (!loading) {
             setLoadingMsgIndex(0);
@@ -88,7 +89,10 @@ const InterviewPrep = () => {
         setController(newController);
         setLoading(true);
         try {
-            const result = await axios.post(`${serverUrl}/api/ai/interview-prep`, { level, type, qcount, resumeUrl: userData.resume }, { withCredentials: true, signal: newController.signal });
+            const result = await axios.post(`${serverUrl}/api/ai/interview-prep`, 
+                { level, type, qcount, resumeUrl: userData.resume }, 
+                { withCredentials: true, signal: newController.signal });
+                 
             setAiResponse(result.data.aiResponse);
 
         } catch (e) {
@@ -115,6 +119,7 @@ const InterviewPrep = () => {
         }
     };
 
+    //for cancelling the request on unmounting the component.
     React.useEffect(() => {
     return () => {
         if (controller) {

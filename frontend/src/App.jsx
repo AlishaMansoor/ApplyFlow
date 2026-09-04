@@ -21,6 +21,7 @@ import ResetPassword from './pages/ResetPassword.jsx';
 import AuthLoadingOverlay from './components/ui/AuthLoadingOverlay.jsx';
 import InterviewPrep from './pages/InterviewPrep.jsx';
 
+
 const Profile = lazy(() => import('./pages/ProfilePage.jsx'));
 const SavedApplication = lazy(() => import('./pages/SavedJobs.jsx'));
 
@@ -41,8 +42,8 @@ const App = () => {
       />
       <Routes>
         /* Public Landing */
-        {/* <Route path="/" element={<LandingPage />} /> */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<LandingPage />} />
+        {/* <Route path="/" element={<Navigate to="/home" replace />} /> */}
 
         /* Auth Routes (Not protected with isAuth) */
         <Route path='/signup' element={userData ? <Navigate to="/home" /> : <Signup />}></Route>

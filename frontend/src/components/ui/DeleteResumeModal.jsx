@@ -3,6 +3,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthDataContext } from '../../context/AuthContext.jsx';
 import {UserDataContext} from '../../context/UserContext.jsx';
+import { toast } from 'react-toastify';
+import { isDemo } from '../../utils/demoguardfunc.js';
+
 
 const DeleteResumeModal = ({ setDeleteResumeModal }) => {
   const { serverUrl } = React.useContext(AuthDataContext);
@@ -17,6 +20,11 @@ const DeleteResumeModal = ({ setDeleteResumeModal }) => {
       setLoading(true);
       setError("");
       setSuccess("");
+      if(isDemo(userData)){
+        toast.error("Deleting resume is disabled for demo users.");
+        setLoading(false);
+        return;
+      }
       await axios.delete(serverUrl+'/api/user/deleteresume', { withCredentials: true });
       setUserData((prev) => ({ ...prev, resume: null })); // Clear user data in context
       setSuccess("Resume deleted successfully!");

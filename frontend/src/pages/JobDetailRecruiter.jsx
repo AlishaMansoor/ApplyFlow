@@ -7,7 +7,7 @@ import { IoLocation } from 'react-icons/io5';
 import { IoLocationOutline } from 'react-icons/io5';
 import { LuBriefcase } from 'react-icons/lu';
 import { IoArrowBack } from 'react-icons/io5';
-import { FaFilePdf } from "react-icons/fa6";
+import { FaUserCircle } from "react-icons/fa";
 import { FaFile } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { formatDate, formatSalary } from '../utils/helperfunc.js';
@@ -189,11 +189,21 @@ function JobDetailRecruiter() {
                           onClick={() => toProfilePage(applicant.candidateId.userName, applicant._id)}
                            />
                      
-                      <div className="w-full flex items-start gap-2">
+                      <div className="w-full flex items-start justify-start gap-3">
+                        
+                        {applicant.candidateId?.profileImage ? 
                         <img
                           src={applicant.candidateId.profileImage}
                           alt={applicant.candidateId.firstName}
-                          className="w-16 h-16 rounded-full object-cover" />
+                          className="w-16 h-16 rounded-full object-cover mt-2" 
+                          /> : 
+                          <div
+                          className="w-10 h-10 mt-2  rounded-full object-cover" 
+                          >
+                            <FaUserCircle className="w-10 h-10 text-center text-gray-400" />
+                          </div>
+                          }
+                        
 
                         <div className="flex flex-col w-full justify-start gap-0 ">
                           <h3 className="font-semibold mt-2 text-base text-gray-600">{applicant.candidateId.firstName} {applicant.candidateId.lastName}</h3>

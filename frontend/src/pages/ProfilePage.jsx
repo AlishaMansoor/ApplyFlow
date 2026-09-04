@@ -19,6 +19,9 @@ import axios from 'axios';
 import JobCardBody from '../components/jobs/JobCardBody.jsx'
 import { ChatDataContext } from '../context/ChatContext.jsx'
 import InviteModal from '../components/ui/InviteModal.jsx'
+import { isDemo } from '../utils/demoguardfunc.js';
+import { toast } from 'react-toastify';
+
 
 const Profile = () => {
 
@@ -310,7 +313,7 @@ const Profile = () => {
             {/* Edit button */}
             {isOwnProfile && (
               <button
-                onClick={() => setEditProfileOpen(true)}
+                onClick={() => {setEditProfileOpen(true)}}
                 className="flex items-center gap-2 bg-emerald-600  
                          text-white px-3 py-1.5 rounded-lg text-sm font-medium
                          hover:bg-emerald-700 transition-colors"

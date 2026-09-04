@@ -8,6 +8,9 @@ import Sidebar from '../components/layout/Sidebar.jsx'
 import Navbar from '../components/layout/Navbar.jsx';
 import { AnimatePresence } from 'framer-motion';
 import { ChatDataContext } from '../context/ChatContext.jsx'
+
+
+
 import { useNavigate } from 'react-router-dom';
 const Chats = () => {
 

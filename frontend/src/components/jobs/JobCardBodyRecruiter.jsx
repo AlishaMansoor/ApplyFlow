@@ -54,7 +54,7 @@ function JobCardBodyRecruiter({ filteredJobs, isProfileIncomplete }) {
 
                         </div>
                     )}
-                    <div className='fixed z-40 right-6 bottom-10 flex flex-col justify-center items-center'>
+                    {/* <div className='fixed z-40 right-6 bottom-10 flex flex-col justify-center items-center'>
                         <button
                             onClick={() =>  {
                                 if (isProfileIncomplete) {
@@ -64,6 +64,21 @@ function JobCardBodyRecruiter({ filteredJobs, isProfileIncomplete }) {
                             className="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center hover:bg-emerald-700 text-3xl font-semibold"
                         >+</button>
                         <p className='text-gray-700 text-xs font-medium mb-1'>Add job</p>
+                    </div> */}
+                    <div className='flex items-center gap-0'>
+                        <button
+                            onClick={() => {
+                                if (isProfileIncomplete) {
+                                    toast.warning("Please complete your profile before posting a job.");
+                                    return;
+                                }
+                                setCreateJobOpen(true);
+                            }}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-2 rounded-full flex items-center gap-1 shadow-sm transition-all whitespace-nowrap"
+                        >
+                            <span className="text-base font-bold">+</span>
+                            <span className="text-sm">Add Job</span>
+                        </button>
                     </div>
                 </div>
                 <div>

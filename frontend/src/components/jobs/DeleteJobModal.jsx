@@ -4,13 +4,21 @@ import {toast} from 'react-toastify';
 import {useNavigate} from 'react-router-dom';
 import { AuthDataContext } from '../../context/AuthContext';
 import { UserDataContext } from '../../context/UserContext';
+import { isDemo } from '../../utils/demoguardfunc.js';
+
+
 
 function DeleteJobModal( {setDeleteModal,jobId}) {
 const { serverUrl } = React.useContext(AuthDataContext);
+const {userData} = React.useContext(UserDataContext);
 
   const navigate = useNavigate();
 
   const confirmDelete = async ( jobId ) => {
+    if(isDemo(userData)){
+      toast.error("Deleting jobs is disabled for demo users.");
+      return;
+    }
     try {
       await axios.delete(`${serverUrl}/api/job/${jobId}`, { withCredentials: true });
       toast.success("Job Deleted Successfully.")

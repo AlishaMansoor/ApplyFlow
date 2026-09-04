@@ -13,7 +13,7 @@ import { SearchQueryContext } from '../context/SearchContext.jsx';
 import { JobDataContext } from '../context/JobContext.jsx';
 import JobCardSkeleton from '../components/ui/JobCardSkeleton.jsx';
 import JobCardRecruiterSkeleton from '../components/ui/JobCardRecruiterSkeleton.jsx';
-
+import CreateJobModal from '../components/jobs/CreateJobModal.jsx';
 
 const Home = () => {
 
@@ -27,6 +27,7 @@ const Home = () => {
     // const [loading, setLoading] = React.useState(false);
     // const [jobs, setJobs] = React.useState([]);
     const [editProfileOpen, setEditProfileOpen] = React.useState(false);
+    const [createJobOpen, setCreateJobOpen] = React.useState(false);
 
 
     React.useEffect(() => {
@@ -63,6 +64,7 @@ const Home = () => {
 return (
     <div className="min-h-screen w-full overflow-x-hidden bg-slate-50">
         {editProfileOpen && <EditProfile setEditProfileOpen={setEditProfileOpen} />}
+        {createJobOpen && <CreateJobModal setCreateJobOpen={setCreateJobOpen} />}
 
         <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -82,7 +84,7 @@ return (
         {/* Home.jsx */}
         <div className="mt-[80px] min-h-[calc(100vh-80px)] lg:ml-[280px] flex flex-col">
 
-            <div className={`p-4 max-w-xl mx-auto  w-full lg:max-w-3xl lg:mx-0 lg:px-6 flex-1 flex flex-col ${!loading && jobs.length === 0 ? 'items-center justify-center' : ''}`}>
+            <div className={`p-4 max-w-xl mx-auto  w-full lg:max-w-3xl lg:mx-0 lg:px-6 flex-1 flex flex-col ${!loading && jobs.length === 0 ? 'items-center justify-center lg:justify-start lg:mt-8' : ''}`}>
 
                 {isProfileIncomplete && (
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 mt-2 flex items-center justify-between w-full">
@@ -104,13 +106,20 @@ return (
                         isRecruiter ? <JobCardRecruiterSkeleton key={index} /> : <JobCardSkeleton key={index} />
                     ))
                 ) : jobs.length === 0 ? (
-                    <div className="h-[240px] w-[90%] border-gray-200 border shadow-md rounded-md  flex flex-col items-center justify-center text-center px-4">
-                        <p className="text-gray-500 text-base italic">
+                    <div className="h-[340px] lg:h-[340px] lg:mt-4 w-full border-gray-200 border shadow-md rounded-lg  flex flex-col items-center justify-center text-center px-4">
+                        <p className="text-gray-500 text-base font-medium  lg:font-semibold italic">
                             {isRecruiter ? "You haven't posted any jobs yet." : "No jobs found!"}
                         </p>
-                        <p className="text-gray-400 text-xs italic mt-1">
+                        <p className="text-gray-400 text-sm italic mt-1">
                             {isRecruiter ? "Post your first job to get started." : "Check back later for new openings."}
                         </p>
+                        <button
+                        disabled={isProfileIncomplete}
+                            onClick={() => setCreateJobOpen(true)}
+                            className="mt-4 bg-emerald-600 text-slate-50 font-medium px-4 py-2 rounded-3xl hover:bg-emerald-700"
+                        >
+                            Add Job
+                        </button>
                     </div>
                 ) : (
                     <>
