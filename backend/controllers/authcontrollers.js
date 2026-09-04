@@ -65,7 +65,7 @@ const signup = async (req, res) => {
             experience,
             resume
         });
-        let token = await genToken(newuser._id);
+        let token = await genToken(newuser._id, newuser.email);
         res.cookie("token", token, {
             httpOnly: true,
             // secure: process.env.NODE_ENV === "production",
@@ -113,7 +113,7 @@ const login = async (req, res) => {
                 message: "Incorrect password"
             });
         }
-        let token = await genToken(existinguser._id);
+        let token = await genToken(existinguser._id,existinguser.email);
         res.cookie("token", token, {
             httpOnly: true,
             // secure: process.env.NODE_ENV === "production",

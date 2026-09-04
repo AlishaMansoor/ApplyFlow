@@ -27,14 +27,33 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const updateData = {};
-        updateData.firstName = req.body.firstName;
-        updateData.lastName = req.body.lastName;
-        updateData.userName = req.body.userName;
-        updateData.headline = req.body.headline;
-        updateData.location = req.body.location;
-        updateData.industry = req.body.industry;
-        updateData.companyWebsite = req.body.companyWebsite;
+        const { firstName, lastName, userName, headline, location, industry, companyWebsite } = req.body;
+        if (!firstName?.trim() || !lastName?.trim() || !userName?.trim()) {
+            return res.status(400).json({ message: "First name, last name, and username are required." });
+        }
+
+        const existingUsername = await User.findOne({
+            userName: userName.trim(),
+            _id: { $ne: req.user.userid }
+        });
+
+        if (existingUsername) {
+            return res.status(400).json({ message: "Username is already taken." });
+        }
+
+
+        const updateData = {
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            userName: userName.trim(),
+            headline: headline?.trim() || "",
+            location: location?.trim() || "",
+            companyWebsite: companyWebsite?.trim() || "",
+        };
+
+        if (industry !== undefined) {
+            updateData.industry = industry.trim() !== "" ? industry.trim() : undefined;
+        }
 
         // Parse JSON strings back to arrays
         if (req.body.skills) {

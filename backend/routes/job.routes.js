@@ -1,8 +1,10 @@
 import express from 'express';
 const jobrouter=express.Router();
 import { getAllJobs, jobWithId, postJob, updateJob, deleteJob, getTotalJobs, getMyJobs} from '../controllers/jobcontrollers.js';
-import { getApplicantsForJob } from '../controllers/applycontrollers.js';
+
+
 import {isAuth} from '../middlewares/authmiddleware.js';
+import { isDemo } from '../middlewares/demoauth.js';
 // import {seedjobs} from '../controllers/jobcontrollers.js';
 
 
@@ -14,5 +16,5 @@ jobrouter.post('/createjob', isAuth, postJob);
 jobrouter.get('/getmyjobs', isAuth, getMyJobs)
 jobrouter.get("/gettotaljobs/:userName",isAuth, getTotalJobs);
 jobrouter.put("/:jobId",isAuth, updateJob);
-jobrouter.delete("/:jobId",isAuth, deleteJob);
+jobrouter.delete("/:jobId",isAuth,isDemo, deleteJob);
 export default jobrouter;
