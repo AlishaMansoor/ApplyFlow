@@ -239,7 +239,7 @@ const LandingPage = () => {
 
                     <div className="flex items-center gap-6">
                         <a
-                            href="https://github.com/your-username/applyflow"
+                            href="https://github.com/alishamansoor/applyflow"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 hover:text-white"
@@ -248,7 +248,7 @@ const LandingPage = () => {
                             GitHub
                         </a>
                         <a
-                            href="https://linkedin.com/in/your-profile"
+                            href="https://linkedin.com/in/alisha-mansoor-72325026a"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 hover:text-white"
