@@ -1,21 +1,48 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
-function Carousel({images, altPrefix}) {
+function Carousel({ images, altPrefix }) {
 
     const [currIndex, setCurrIndex] = React.useState(0);
-    const next = () =>{
-        setCurrIndex((prev)=>(prev+1)%images.length);
+    const [isHovered, setIsHovered] = useState(false);
+
+    React.useEffect(() => {
+        images.forEach((src) => {
+            const img = new Image();
+            img.src = src;
+        });
+    }, [images]);
+
+
+
+    const next = useCallback(() => {
+        setCurrIndex((prev) => (prev + 1) % images.length);
+    }, [images.length]);
+
+    const prev = () => {
+        setCurrIndex((prev) => (prev - 1 + images.length) % images.length);
     }
 
-    const prev = () =>{
-        setCurrIndex((prev)=>(prev-1+images.length)%images.length);
-    }
+
+    React.useEffect(() => {
+        if (isHovered) return;
+        const timer = setInterval(() => {
+            next();
+        }, 2000);
+        return () => clearInterval(timer);
+    }, [currIndex, isHovered, next]);
 
 
-  return (
-       <div className="relative w-full md:max-w-3xl lg:max-w-4xl mx-auto">
-            <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-white">
+
+
+
+    return (
+        <div className="relative w-full md:max-w-3xl lg:max-w-4xl mx-auto">
+            <div
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className="rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-white">
+
                 <img
                     src={images[currIndex]}
                     alt={`${altPrefix} screenshot ${currIndex + 1}`}
@@ -25,6 +52,7 @@ function Carousel({images, altPrefix}) {
 
             <button
                 onClick={prev}
+
                 className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-2 shadow-md"
             >
                 <IoChevronBack className="w-5 h-5" />
@@ -47,7 +75,7 @@ function Carousel({images, altPrefix}) {
                 ))}
             </div>
         </div>
-  )
+    )
 }
 
 export default Carousel
